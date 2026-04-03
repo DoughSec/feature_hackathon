@@ -9,6 +9,7 @@ function TaskBoard() {
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('ALL');
   const [priority, setPriority] = useState('LOW');
+  const [users, setUsers] = useState([]);
 
   const loadTasks = async () => {
     try {
@@ -22,8 +23,21 @@ function TaskBoard() {
     }
   };
 
+  const loadUsers = async () => {
+    try {
+      const res = await api.get('/users');
+      setUsers(res.data);
+      setError('');
+    } catch (err) {
+      setError('Failed to load users');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
     loadTasks();
+    loadUsers();
   }, []);
 
   const updateStatus = async (id, newStatus) => {
@@ -31,6 +45,7 @@ function TaskBoard() {
       const task = tasks.find(t => t.id === id);
       await api.put(`/tasks/${id}`, { ...task, status: newStatus });
       loadTasks();
+      loadUsers();
     } catch (err) {
       setError('Failed to update task');
     }
@@ -41,6 +56,18 @@ function TaskBoard() {
       const task = tasks.find(t => t.id === id);
       await api.put(`/tasks/${id}`, { ...task, priority: newPriority });
       loadTasks();
+      loadUsers();
+    } catch (err) {
+      setError('Failed to update task');
+    }
+  };
+
+  const updateUser = async (id, newUser) => {
+    try {
+      const task = tasks.find(t => t.id === id);
+      await api.put(`/tasks/${id}`, { ...task, userId: newUser.id });
+      loadTasks();
+      loadUsers();
     } catch (err) {
       setError('Failed to update task');
     }
@@ -83,6 +110,16 @@ function TaskBoard() {
       default: return status;
     }
   };
+
+  function userDropdown() {
+    return (
+      users.forEach((user) => {
+        let option = document.createElement("option");
+        option.value = user;
+        option.innerHTML = user;
+        select.appendChild(option);
+      }));
+  }
 
   /* search bar filter */
   const filteredTasks = tasks.filter((task) => {
@@ -160,6 +197,19 @@ function TaskBoard() {
                     <option value="IN_PROGRESS">In Progress</option>
                     <option value="DONE">Done</option>
                   </select>
+
+                  <select
+                    value={task.userId}
+                    onChange={(e) => updateUser(task.id, e.target.value)}
+                    className="status-select"
+                  >
+                    <option value="">Unassigned</option>
+                    {users.map((user) => (
+                      <option key={user.id} value={user.id}>{user.name}</option>
+                    ))}
+                  </select>
+
+
                   <button
                     onClick={() => deleteTask(task.id)}
                     className="btn btn-danger btn-sm"
