@@ -8,6 +8,7 @@ function TaskBoard() {
   const [error, setError] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('ALL');
+  const [priority, setPriority] = useState('LOW');
 
   const loadTasks = async () => {
     try {
@@ -60,6 +61,16 @@ function TaskBoard() {
       case 'TODO': return 'status-todo';
       case 'IN_PROGRESS': return 'status-in-progress';
       case 'DONE': return 'status-done';
+      default: return '';
+    }
+  };
+
+  //.priority-medium
+  const getPriorityClass = (priority) => {
+    switch (priority) {
+      case 'LOW': return 'priority-low';
+      case 'MEDIUM': return 'priority-medium';
+      case 'HIGH': return 'priority-high';
       default: return '';
     }
   };
@@ -134,11 +145,11 @@ function TaskBoard() {
                   <select
                     value={task.priority}
                     onChange={(e) => updatePriority(task.id, e.target.value)}
-                    className="status-select"
+                    className={getPriorityClass(priority)}
                   >
-                    <option value="LOW">Low</option>
-                    <option value="MEDIUM">Medium</option>
-                    <option value="HIGH">High</option>
+                    <option value="LOW" className={getPriorityClass('LOW')} onChange={(e) => setPriority(e.target.value)}>Low</option>
+                    <option value="MEDIUM" className={getPriorityClass('MEDIUM')} onChange={(e) => setPriority(e.target.value)}>Medium</option>
+                    <option value="HIGH" className={getPriorityClass('HIGH')} onChange={(e) => setPriority(e.target.value)}>High</option>
                   </select>
                   <select
                     value={task.status}
