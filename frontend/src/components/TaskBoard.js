@@ -65,9 +65,13 @@ function TaskBoard() {
   const updateUser = async (id, newUser) => {
     try {
       const task = tasks.find(t => t.id === id);
-      await api.put(`/tasks/${id}`, { ...task, userId: newUser.id });
+
+      await api.put(`/tasks/${id}`, {
+        ...task,
+        user: newUser ? { id: Number(newUser) } : null
+      });
+
       loadTasks();
-      loadUsers();
     } catch (err) {
       setError('Failed to update task');
     }
@@ -199,7 +203,7 @@ function TaskBoard() {
                   </select>
 
                   <select
-                    value={task.userId}
+                    value={task.user?.id ?? ''}
                     onChange={(e) => updateUser(task.id, e.target.value)}
                     className="status-select"
                   >

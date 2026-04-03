@@ -1,6 +1,8 @@
 package com.taskboard.controller;
 
 import com.taskboard.model.Task;
+import com.taskboard.model.User;
+import com.taskboard.repository.UserRepository;
 import com.taskboard.service.TaskService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -12,9 +14,11 @@ import java.util.List;
 public class TaskController {
 
     private final TaskService taskService;
+    private final UserRepository userRepository;
 
-    public TaskController(TaskService taskService) {
+    public TaskController(TaskService taskService, UserRepository userRepository) {
         this.taskService = taskService;
+        this.userRepository = userRepository;
     }
 
     @GetMapping
@@ -38,7 +42,13 @@ public class TaskController {
     public ResponseEntity<Task> updateTask(@PathVariable Long id, @RequestBody Task task) {
         return taskService.getTaskById(id)
                 .map(existing -> {
-                    existing.setUser(task.getUser());
+                    if (task.getUser() == null) {
+                        existing.setUser(null);
+                    } else {
+                        User user = userRepository.findById(task.getUser().getId())
+                                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+                        existing.setUser(user);
+                    }
                     if (task.getTitle() != null) existing.setTitle(task.getTitle());
                     if (task.getDescription() != null) existing.setDescription(task.getDescription());
                     if (task.getStatus() != null) existing.setStatus(task.getStatus());
