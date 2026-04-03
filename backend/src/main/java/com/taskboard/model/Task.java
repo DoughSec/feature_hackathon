@@ -17,6 +17,9 @@ public class Task {
     @Column(length = 1000)
     private String description;
 
+    @Column
+    private String priority = "MEDIUM";
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private TaskStatus status = TaskStatus.TODO;
@@ -34,6 +37,13 @@ public class Task {
         }
     }
 
+    public String getPriority() {
+        return priority;
+    }
+
+    public void setPriority(String priority) {
+        this.priority = priority;
+    }
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 

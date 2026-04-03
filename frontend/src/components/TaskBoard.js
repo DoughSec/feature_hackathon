@@ -6,6 +6,8 @@ function TaskBoard() {
   const [tasks, setTasks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [searchTerm, setSearchTerm] = useState('');
+  const [statusFilter, setStatusFilter] = useState('ALL');
 
   const loadTasks = async () => {
     try {
@@ -27,6 +29,16 @@ function TaskBoard() {
     try {
       const task = tasks.find(t => t.id === id);
       await api.put(`/tasks/${id}`, { ...task, status: newStatus });
+      loadTasks();
+    } catch (err) {
+      setError('Failed to update task');
+    }
+  };
+
+  const updatePriority = async (id, newPriority) => {
+    try {
+      const task = tasks.find(t => t.id === id);
+      await api.put(`/tasks/${id}`, { ...task, priority: newPriority });
       loadTasks();
     } catch (err) {
       setError('Failed to update task');
@@ -61,6 +73,14 @@ function TaskBoard() {
     }
   };
 
+  /* search bar filter */
+  const filteredTasks = tasks.filter((task) => {
+    const matchesSearch = task.title.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesStatus = statusFilter === 'ALL' || task.status === statusFilter;
+
+    return matchesSearch && matchesStatus;
+  });
+
   if (loading) return <div className="loading">Loading tasks...</div>;
 
   return (
@@ -70,11 +90,35 @@ function TaskBoard() {
         <Link to="/tasks/new" className="btn btn-primary">+ New Task</Link>
       </div>
       {error && <div className="error-message">{error}</div>}
+
+      {/* search bar filter */}
+      <div className="task-filters">
+        <input
+          type="text"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          placeholder="Search tasks by title"
+          className="task-search-input"
+        />
+        <select
+          value={statusFilter}
+          onChange={(e) => setStatusFilter(e.target.value)}
+          className="task-filter-select"
+        >
+          <option value="ALL">All Statuses</option>
+          <option value="TODO">To Do</option>
+          <option value="IN_PROGRESS">In Progress</option>
+          <option value="DONE">Done</option>
+        </select>
+      </div>
+
       <div className="task-list">
         {tasks.length === 0 ? (
           <div className="empty-state">No tasks yet. Create one to get started!</div>
+        ) : filteredTasks.length === 0 ? (
+          <div className="empty-state">No tasks match your current filters.</div>
         ) : (
-          tasks.map(task => (
+          filteredTasks.map(task => (
             <div key={task.id} className="task-card">
               <div className="task-card-header">
                 <Link to={`/tasks/${task.id}`} className="task-title">{task.title}</Link>
@@ -82,10 +126,20 @@ function TaskBoard() {
                   {formatStatus(task.status)}
                 </span>
               </div>
+
               <p className="task-description">{task.description}</p>
               <div className="task-card-footer">
                 <span className="task-meta">Created by {task.createdBy}</span>
                 <div className="task-actions">
+                  <select
+                    value={task.priority}
+                    onChange={(e) => updatePriority(task.id, e.target.value)}
+                    className="status-select"
+                  >
+                    <option value="LOW">Low</option>
+                    <option value="MEDIUM">Medium</option>
+                    <option value="HIGH">High</option>
+                  </select>
                   <select
                     value={task.status}
                     onChange={(e) => updateStatus(task.id, e.target.value)}
@@ -112,3 +166,4 @@ function TaskBoard() {
 }
 
 export default TaskBoard;
+

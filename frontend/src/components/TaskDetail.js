@@ -32,6 +32,16 @@ function TaskDetail() {
     }
   };
 
+  const updatePriority = async (id, newPriority) => {
+    try {
+      const res = await api.put(`/tasks/${id}`, { ...task, priority: newPriority });
+      setTask(res.data);
+    } catch (err) {
+      setError('Failed to update task');
+    }
+  };
+
+
   const deleteTask = async () => {
     if (!window.confirm('Are you sure you want to delete this task?')) return;
     try {
@@ -85,6 +95,17 @@ function TaskDetail() {
         </div>
         <div className="task-detail-actions">
           <label>Update Status:</label>
+
+          <select
+            value={task.priority}
+            onChange={(e) => updatePriority(task.id, e.target.value)}
+            className="status-select"
+          >
+            <option value="LOW">Low</option>
+            <option value="MEDIUM">Medium</option>
+            <option value="HIGH">High</option>
+          </select>
+
           <select
             value={task.status}
             onChange={(e) => updateStatus(e.target.value)}

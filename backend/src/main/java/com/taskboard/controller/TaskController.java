@@ -41,6 +41,7 @@ public class TaskController {
                     if (task.getTitle() != null) existing.setTitle(task.getTitle());
                     if (task.getDescription() != null) existing.setDescription(task.getDescription());
                     if (task.getStatus() != null) existing.setStatus(task.getStatus());
+                    if (task.getPriority() != null) existing.setPriority(task.getPriority());
                     return ResponseEntity.ok(taskService.updateTask(existing));
                 })
                 .orElse(ResponseEntity.notFound().build());
