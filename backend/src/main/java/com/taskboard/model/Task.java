@@ -11,6 +11,10 @@ public class Task {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User user;
+
     @Column(nullable = false)
     private String title;
 
@@ -44,8 +48,17 @@ public class Task {
     public void setPriority(String priority) {
         this.priority = priority;
     }
+
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
 
     public String getTitle() { return title; }
     public void setTitle(String title) { this.title = title; }

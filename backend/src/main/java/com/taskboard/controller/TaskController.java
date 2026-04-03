@@ -38,6 +38,7 @@ public class TaskController {
     public ResponseEntity<Task> updateTask(@PathVariable Long id, @RequestBody Task task) {
         return taskService.getTaskById(id)
                 .map(existing -> {
+                    existing.setUser(task.getUser());
                     if (task.getTitle() != null) existing.setTitle(task.getTitle());
                     if (task.getDescription() != null) existing.setDescription(task.getDescription());
                     if (task.getStatus() != null) existing.setStatus(task.getStatus());
