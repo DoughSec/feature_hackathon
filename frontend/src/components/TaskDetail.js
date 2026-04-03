@@ -97,13 +97,15 @@ function TaskDetail() {
           <label>Update Status:</label>
 
           <select
+          // Need to add a way for it to check if it's LOW, MEDIUM, or HIGH,
+          // to be able to change the text color accordingly on the card.
             value={task.priority}
             onChange={(e) => updatePriority(task.id, e.target.value)}
             className="status-select"
           >
-            <option value="LOW">Low</option>
-            <option value="MEDIUM">Medium</option>
-            <option value="HIGH">High</option>
+                    <option style={{color: "yellow"}} value="LOW">Low</option>
+                    <option style={{color: "orange"}} value="MEDIUM">Medium</option>
+                    <option style={{color: "red"}} value="HIGH" >High</option>
           </select>
 
           <select
