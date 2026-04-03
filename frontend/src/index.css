@@ -410,6 +410,8 @@ a:hover {
   color: #27ae60;
 }
 
+
+
 /* ===================== */
 /*    Status Select      */
 /* ===================== */
@@ -420,6 +422,29 @@ a:hover {
   border-radius: 6px;
   font-size: 0.85rem;
   cursor: pointer;
+}
+
+.priority-select {
+  padding: 0.3rem 0.5rem;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
+.priority-medium {
+  background: #ebf5fb;
+  color: yellow;
+}
+
+.priority-high {
+  background: #fef9e7;
+  color: #e67e22;
+}
+
+.priority-low {
+  background: #eafaf1;
+  color: #27ae60;
 }
 
 /* ===================== */
